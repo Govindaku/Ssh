@@ -1,0 +1,16 @@
+name: Free VPS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Server
+        run: |
+          echo "📦 Updating packages..."
+          sudo apt update -y
+          sudo apt install -y wget curl net-tools
+          echo "✅ VPS is live for 1 hour!"
+          sleep 360
