@@ -1,0 +1,35 @@
+name: SSH VPS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sshvps:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚀 Setup SSH VPS
+        run: |
+          echo "📦 Updating packages..."
+          sudo apt update
+          sudo apt install -y openssh-server wget curl
+
+          echo "🔑 Starting SSH service..."
+          sudo service ssh start
+
+          echo "👤 Creating SSH user..."
+          sudo useradd -m govinda
+          echo 'govinda:password123' | sudo chpasswd
+          sudo usermod -aG sudo govinda
+
+          echo "☁️ Installing Cloudflared..."
+          wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O cloudflared
+          chmod +x cloudflared
+          ./cloudflared --version
+
+          echo "🌐 Starting Cloudflared Tunnel..."
+          ./cloudflared tunnel --url ssh://localhost:22 --no-autoupdate > tunnel.log 2>&1 &
+          sleep 10
+
+          echo "📡 Showing Tunnel URL:"
+          cat tunnel.log | grep -i 'trycloudflare.com' || echo "❌ Tunnel URL not found!
