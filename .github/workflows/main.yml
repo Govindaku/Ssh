@@ -33,3 +33,6 @@ jobs:
 
           echo "📡 Tunnel URL:"
           grep -o 'https://[-a-zA-Z0-9]*\.trycloudflare\.com' tunnel.log || echo "❌ Tunnel URL not found!"
+
+          echo "🕐 Keeping VPS alive for 1 hour..."
+sleep 3600
