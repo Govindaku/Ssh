@@ -22,14 +22,15 @@ jobs:
           echo 'govinda:password123' | sudo chpasswd
           sudo usermod -aG sudo govinda
 
-          echo "☁️ Installing Cloudflared..."
-          wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O cloudflared
+          echo "☁️ Downloading working Cloudflared binary..."
+          wget -O cloudflared.tgz https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.tgz
+          tar -xvzf cloudflared.tgz
           chmod +x cloudflared
           ./cloudflared --version
 
-          echo "🌐 Starting Cloudflared Tunnel..."
+          echo "🌐 Starting Cloudflared tunnel..."
           ./cloudflared tunnel --url ssh://localhost:22 --no-autoupdate > tunnel.log 2>&1 &
           sleep 10
 
-          echo "📡 Showing Tunnel URL:"
-          cat tunnel.log | grep -i 'trycloudflare.com' || echo "❌ Tunnel URL not found!
+          echo "📡 Tunnel URL:"
+          grep -i 'trycloudflare.com' tunnel.log || echo "❌ Tunnel URL not found!"
