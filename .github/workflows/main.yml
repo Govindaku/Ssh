@@ -1,16 +1,24 @@
-name: Free VPS
+name: SSH VPS
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  sshvps:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Server
+      - name: Setup SSH Server
         run: |
-          echo "📦 Updating packages..."
-          sudo apt update -y
-          sudo apt install -y wget curl net-tools
-          echo "✅ VPS is live for 1 hour!"
-          sleep 360
+          sudo apt update
+          sudo apt install -y openssh-server wget curl
+          sudo service ssh start
+
+          echo "Creating SSH user..."
+          sudo useradd -m govinda
+          echo 'govinda:password123' | sudo chpasswd
+          sudo usermod -aG sudo govinda
+
+          echo "Installing Cloudflared..."
+          wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x cloudflared-linux-amd64
+          ./cloudflared-linux-amd64 tunnel --url ssh://localhost:22 --no-autoupdate
